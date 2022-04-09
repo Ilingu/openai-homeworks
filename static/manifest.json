@@ -1,0 +1,39 @@
+{
+	"name": "OpenAI Homeworks",
+	"short_name": "AI For ur Homeworks",
+	"description": "OpenAI will do your homeworks (❁´◡`❁)",
+	"icons": [
+		{
+			"src": "/IMG/favicon.ico",
+			"sizes": "32x32",
+			"type": "image/x-icon"
+		},
+		{
+			"src": "/IMG/favicon.png",
+			"sizes": "128x128",
+			"type": "image/png"
+		},
+		{
+			"src": "/IMG/openai-logo-192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/IMG/openai-logo-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/IMG/openai-logo-512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"start_url": ".",
+	"id": "/",
+	"display": "standalone",
+	"orientation": "portrait",
+	"background_color": "#feffe7",
+	"theme_color": "#744a0f"
+}

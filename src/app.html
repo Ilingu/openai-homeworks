@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+	<head>
+		<!-- Config -->
+		<meta charset="utf-8" />
+		<link rel="manifest" crossorigin="use-credentials" href="%svelte.assets%/manifest.json" />
+		<link rel="icon" href="%svelte.assets%/IMG/favicon.png" />
+		<link rel="apple-touch-icon" sizes="192x192" href="%svelte.assets%/IMG/openai-logo-192.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#744a0f" />
+		<meta name="msapplication-navbutton-color" content="#ffdd00" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<!-- App -->
+		<meta name="keywords" content="OpenAI, homeworks" />
+		<meta name="author" content="Ilingu" />
+		<meta name="application-name" content="OpenAI homeworks" />
+		<meta name="description" content="OpenAI will do your homeworks (❁´◡`❁)" />
+		<!-- Google -->
+		<meta name="robots" content="index,follow,noodp" />
+		<meta name="googlebot" content="index,follow" />
+		%svelte.head%
+	</head>
+	<body class="bg-primary-lightest">
+		<noscript style="font-size: '40px'; font-family: 'sans-serif'; text-align: 'center'">
+			{"> "}To use ACK,{" "}
+			<a
+				href="https://www.enable-javascript.com/"
+				target="_blank"
+				rel="noopener noreferrer"
+				style="color: '#6366f1'"
+			>
+				please enable JavaScript.
+				<br />
+			</a>
+		</noscript>
+		<div id="root">%svelte.body%</div>
+	</body>
+</html>

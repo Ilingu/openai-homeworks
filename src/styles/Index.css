@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Tailwind */
+@layer components {
+  .middle {
+    @apply grid place-content-center place-items-center;
+  }
+}
+/*# sourceMappingURL=Index.css.map */

@@ -1,0 +1,7 @@
+# Groupe 1
+User-agent: Googlebot
+Disallow: /IMG
+
+# Groupe 2
+User-agent: *
+Allow: /
