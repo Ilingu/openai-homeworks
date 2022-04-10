@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Metatags from '$lib/components/Metatags.svelte';
+
 	import type { IconDatasShape } from '$lib/interfaces/interfaces';
 
 	import { onDestroy, onMount } from 'svelte';
@@ -77,6 +79,7 @@
 	];
 </script>
 
+<Metatags />
 <article class="middle w-full">
 	<h1
 		class="active min-h-[96px] overflow-y-hidden text-center text-3xl text-primary-headline sm:h-24 sm:text-4xl md:text-5xl"

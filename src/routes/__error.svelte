@@ -12,6 +12,8 @@
 </script>
 
 <script lang="ts">
+	import Metatags from '$lib/components/Metatags.svelte';
+
 	import { onMount } from 'svelte';
 
 	export let msg: string;
@@ -23,6 +25,7 @@
 	});
 </script>
 
+<Metatags title="ERROR ⛔" />
 <section class="middle">
 	<!-- <Metatags title="404 Page Not Found!" description="404 Page" /> -->
 	<h1 class="mb-2 font-mono text-6xl font-bold text-red-500">
