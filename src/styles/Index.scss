@@ -4,6 +4,9 @@
 
 /* Tailwind */
 @layer components {
+	* {
+		@apply text-primary-headline;
+	}
 	.middle {
 		@apply grid place-content-center place-items-center;
 	}
