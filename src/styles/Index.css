@@ -3,11 +3,12 @@
 @tailwind utilities;
 /* Tailwind */
 @layer components {
-  * {
-    @apply text-primary-headline;
-  }
   .middle {
-    @apply grid place-content-center place-items-center;
+    @apply grid flex-1 place-content-center place-items-center;
   }
+}
+
+* {
+  font-family: 'Courier New', Courier, monospace;
 }
 /*# sourceMappingURL=Index.css.map */

@@ -5,7 +5,7 @@
 	import '../styles/Index.css';
 </script>
 
-<main class="h-screen">
+<main class="flex h-screen flex-col">
 	<Navbar />
 	<slot />
 </main>
