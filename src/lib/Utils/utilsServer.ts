@@ -1,7 +1,7 @@
 import type { ApiRes, ParseReqShape } from '$lib/interfaces/interfaces';
-import type { RequestShape } from '$lib/interfaces/types';
+import type { EnginesNames, RequestShape } from '$lib/interfaces/types';
 import { encode } from 'gpt-3-encoder';
-import { IsValidURL } from './utils';
+import { isValidEngine, IsValidURL } from './utils';
 
 /**
  * Return An Internal API Error Object
@@ -36,9 +36,9 @@ export const ReturnRedirect = (redirect_uri: string): ApiRes => ({
 });
 
 /**
- * Return An Internal API Redirect Object
- * @param {string} redirect_uri
- * @returns Redirect Object To Send
+ * Parse The Request Obj From API
+ * @param {RequestShape} request
+ * @returns {ParseReqShape} An object with the validity of the req and if valid the request data
  */
 export const ParseRequest = async (request: RequestShape): Promise<ParseReqShape> => {
 	const data = await request.json();
@@ -47,6 +47,7 @@ export const ParseRequest = async (request: RequestShape): Promise<ParseReqShape
 	const { Prompt, Engine } = data;
 	if (!Prompt || !Engine || Prompt.trim().length <= 0 || Engine.trim().length <= 0)
 		return { success: false };
+	if (!isValidEngine(Engine)) return { success: false };
 
 	return { success: true, data };
 };

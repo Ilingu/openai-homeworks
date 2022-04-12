@@ -18,26 +18,6 @@ Q: <Question>(endwith "?" ? nothing : "?")
 A:
  -->
 
-<!-- Davinci
-	 MAX_PROMPT: 20 token
-	 MAX_COMPLETION: 40 token
--->
-
-<!-- Currie
-	 MAX_PROMPT: 25 token
-	 MAX_COMPLETION: 50 token
--->
-
-<!-- Babbage
-	 MAX_PROMPT: 30 token
-	 MAX_COMPLETION: 60 token
--->
-
-<!-- Ada
-	 MAX_PROMPT: 40 token
-	 MAX_COMPLETION: 80 token
--->
-
 <Metatags />
 <article class="middle w-full">
 	<h1 class="text-4xl font-semibold text-primary-800">

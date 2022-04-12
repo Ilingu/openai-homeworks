@@ -1,4 +1,4 @@
-import type { JSONFormatter } from './types';
+import type { EnginesNames, JSONFormatter } from './types';
 
 export interface IconDatasShape {
 	icon: string;
@@ -16,4 +16,11 @@ export interface ApiRes {
 export interface ParseReqShape {
 	success: boolean;
 	data?: JSONFormatter;
+}
+
+export interface ParseReqOpenAIShape extends ParseReqShape {
+	data?: {
+		Prompt: string;
+		Engine: EnginesNames;
+	};
 }
