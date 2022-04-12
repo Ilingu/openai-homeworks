@@ -1,5 +1,5 @@
 import type { ApiRes, ParseReqShape } from '$lib/interfaces/interfaces';
-import type { RequestShape } from '$lib/interfaces/types';
+import type { JSONFormatter, RequestShape } from '$lib/interfaces/types';
 import { encode } from 'gpt-3-encoder';
 import { isValidEngine, IsValidURL } from './utils';
 
