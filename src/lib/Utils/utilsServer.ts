@@ -1,5 +1,5 @@
 import type { ApiRes, ParseReqShape } from '$lib/interfaces/interfaces';
-import type { EnginesNames, RequestShape } from '$lib/interfaces/types';
+import type { RequestShape } from '$lib/interfaces/types';
 import { encode } from 'gpt-3-encoder';
 import { isValidEngine, IsValidURL } from './utils';
 
@@ -9,10 +9,13 @@ import { isValidEngine, IsValidURL } from './utils';
  * @param {number | 500} http_error_code (Default: 500)
  * @returns Error Object To Send
  */
-export const ReturnError = (reason?: string, http_error_code?: number): ApiRes => ({
-	error: Error(reason || 'Something Went Wrong 😨'),
-	status: http_error_code || 500
-});
+export const ReturnError = (reason?: string, http_error_code?: number): ApiRes => {
+	console.error('API_ERROR: ', http_error_code || 500, reason);
+	return {
+		error: Error(reason || 'Something Went Wrong 😨'),
+		status: http_error_code || 500
+	};
+};
 
 /**
  * Return An Internal API Success Object
@@ -22,7 +25,7 @@ export const ReturnError = (reason?: string, http_error_code?: number): ApiRes =
  */
 export const ReturnSuccess = (data?: object, code?: number): ApiRes => ({
 	status: code || 200,
-	body: data ? JSON.stringify(data) : undefined
+	body: data || undefined
 });
 
 /**
@@ -44,7 +47,9 @@ export const ParseRequest = async (request: RequestShape): Promise<ParseReqShape
 	const data = await request.json();
 	if (!data) return { success: false };
 
-	const { Prompt, Engine } = data;
+	const Prompt = data['Prompt'];
+	const Engine = data['Engine'];
+
 	if (!Prompt || !Engine || Prompt.trim().length <= 0 || Engine.trim().length <= 0)
 		return { success: false };
 	if (!isValidEngine(Engine)) return { success: false };
@@ -57,7 +62,7 @@ export const ParseRequest = async (request: RequestShape): Promise<ParseReqShape
  * @param {string} str
  * @returns {number} number of token in str
  */
-export const HowManyToken = (str: string): number => {
+export const HowManyTokens = (str: string): number => {
 	const encoded: number[] = encode(str);
 	return encoded?.length || 0;
 };

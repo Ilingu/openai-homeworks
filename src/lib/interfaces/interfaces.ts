@@ -1,26 +1,65 @@
 import type { EnginesNames, JSONFormatter } from './types';
 
-export interface IconDatasShape {
-	icon: string;
-	desc: string;
-	href: string;
-}
-
+/* Back */
+// Internal ApiRes
 export interface ApiRes {
 	status: number;
 	redirect?: string;
 	error?: Error;
-	body?: string;
+	body?: object;
 }
 
-export interface ParseReqShape {
+//#region FuncRes
+interface FunctionResponseShape {
 	success: boolean;
+	data?: object;
+}
+
+export interface ParseReqShape extends FunctionResponseShape {
 	data?: JSONFormatter;
 }
-
 export interface ParseReqOpenAIShape extends ParseReqShape {
 	data?: {
 		Prompt: string;
 		Engine: EnginesNames;
 	};
+}
+
+export interface GetPriceRes extends FunctionResponseShape {
+	data?: {
+		MAX_AI_TOKEN: number;
+	};
+}
+//#endregion
+
+//#region OpenAICall
+export interface OpenAICallResShape extends FunctionResponseShape {
+	data?: { res: OpenAIChoice };
+}
+export interface OpenAIResShape {
+	id: string;
+	object: string;
+	created: number;
+	model: string;
+	choices: OpenAIChoice[];
+}
+export interface OpenAIChoice {
+	text: string;
+	index: number;
+	logprobs: LogprobsShape | null;
+	finish_reason: string;
+}
+interface LogprobsShape {
+	tokens?: string[];
+	token_logprobs?: number[];
+	top_logprobs?: object[];
+	text_offset?: number[];
+}
+//#endregion
+
+/* Front */
+export interface IconDatasShape {
+	icon: string;
+	desc: string;
+	href: string;
 }
