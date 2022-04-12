@@ -10,5 +10,17 @@
 
 * {
   font-family: 'Courier New', Courier, monospace;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+::-moz-selection {
+  color: #feffe7;
+  background: #4c310a;
+}
+
+::selection {
+  color: #feffe7;
+  background: #4c310a;
 }
 /*# sourceMappingURL=Index.css.map */

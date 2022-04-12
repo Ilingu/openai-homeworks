@@ -11,4 +11,10 @@
 
 * {
 	font-family: 'Courier New', Courier, monospace;
+	box-sizing: border-box;
+}
+
+::selection {
+	color: #feffe7;
+	background: #4c310a;
 }
