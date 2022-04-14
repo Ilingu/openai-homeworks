@@ -1,5 +1,5 @@
 import type { OpenAICallResShape, OpenAIResShape } from '$lib/interfaces/interfaces';
-import type { EnginesNames } from '$lib/interfaces/types';
+import type { EnginesNames, TemperatureVal } from '$lib/interfaces/types';
 import { Configuration, OpenAIApi } from 'openai';
 
 import dotenv from 'dotenv';
@@ -11,7 +11,6 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-type TemperatureVal = 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1;
 interface OpenAIReqArgsShape {
 	max_tokens: number;
 	prompt: string;

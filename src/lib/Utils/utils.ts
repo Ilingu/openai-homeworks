@@ -1,5 +1,6 @@
 import type { GetWorkerRes, OpenAIResTextObject } from '$lib/interfaces/interfaces';
-import type { EnginesNames } from '$lib/interfaces/types';
+import type { EnginesNames, TemperatureVal, ToastType } from '$lib/interfaces/types';
+import { toasts } from 'svelte-toasts';
 
 /**
  * Check if the url is a valid one
@@ -37,13 +38,14 @@ export const isValidEngine = (engine: EnginesNames | string): boolean => {
  */
 export const RequestOpenAI = async (
 	Prompt: string,
-	Engine: EnginesNames
+	Engine: EnginesNames,
+	Temperature?: TemperatureVal
 ): Promise<OpenAIResTextObject> => {
 	try {
 		// Request
 		const OpenAIRes = await fetch(`${window.location.origin}/api`, {
 			method: 'POST',
-			body: JSON.stringify({ Engine, Prompt })
+			body: JSON.stringify({ Engine, Prompt, Temperature: Temperature || 0 })
 		});
 
 		// Response
@@ -90,3 +92,6 @@ export const HandleWorkers = (
 		} else return rej('WebWorkers not supported');
 	});
 };
+
+export const PushToast = (message: string, type: ToastType, duration: number) =>
+	toasts.add({ title: message, duration, type });

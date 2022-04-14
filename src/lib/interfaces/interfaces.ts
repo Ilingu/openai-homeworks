@@ -1,4 +1,4 @@
-import type { EnginesNames, JSONFormatter } from './types';
+import type { EnginesNames, JSONFormatter, TemperatureVal } from './types';
 
 /* Back */
 // Internal ApiRes
@@ -28,6 +28,7 @@ export interface ParseReqOpenAIShape extends ParseReqShape {
 	data?: {
 		Prompt: string;
 		Engine: EnginesNames;
+		Temperature: string;
 	};
 }
 

@@ -1,4 +1,5 @@
 import type { ParseReqOpenAIShape } from '$lib/interfaces/interfaces';
+import type { TemperatureVal } from '$lib/interfaces/types';
 import { OpenAICall } from '$lib/Utils/OpenAI';
 import { GetPrice } from '$lib/Utils/prices';
 import { ReturnError, ReturnSuccess, ParseRequest } from '$lib/Utils/utilsServer';
@@ -9,7 +10,7 @@ export async function post({ request }) {
 		/* Parsing Datas + Auth */
 		const { success, data } = (await ParseRequest(request)) as ParseReqOpenAIShape;
 		if (!success || !data) return ReturnError('Bad Args', 400); // ⛔
-		const { Prompt, Engine } = data;
+		const { Prompt, Engine, Temperature } = data;
 
 		// TODO: Authentification
 
@@ -23,7 +24,7 @@ export async function post({ request }) {
 			engine: Engine,
 			prompt: Prompt,
 			max_tokens: MAX_AI_TOKEN,
-			temperature: 0.7
+			temperature: parseFloat(Temperature) as TemperatureVal
 		});
 
 		if (!OaiResponse.success || !OaiResponse?.data?.res)

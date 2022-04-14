@@ -1,7 +1,11 @@
 <script lang="ts">
+	// Components
+	import DisplayAiRes from '$lib/components/DisplayAIRes.svelte';
 	import Metatags from '$lib/components/Metatags.svelte';
+	import SelectAi from '$lib/components/SelectAI.svelte';
+	// Types
 	import type { EnginesNames } from '$lib/interfaces/types';
-	import { isValidEngine, RequestOpenAI } from '$lib/Utils/utils';
+	import { isValidEngine, PushToast, RequestOpenAI } from '$lib/Utils/utils';
 	import { onMount } from 'svelte';
 
 	let InputQuestValue = '';
@@ -15,8 +19,8 @@
 	const HandleSubmit = async () => {
 		try {
 			InputQuestValue = InputQuestValue.trim();
-			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue)) return;
-
+			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue))
+				return PushToast('Bad Arguments', 'warning', 3600);
 			const FormattedQuestion = InputQuestValue.endsWith('?')
 				? InputQuestValue
 				: `${InputQuestValue}?`;
@@ -26,8 +30,7 @@
 					: `I am a highly intelligent question answering bot. If you ask me a question that is rooted in truth, I will give you the answer.\nQ: ${FormattedQuestion}\nA:`;
 
 			const OpenAIResponse = await RequestOpenAI(FormattedPrompt, EngineValue);
-			if (!OpenAIResponse.success) return;
-			console.log(OpenAIResponse.data);
+			if (!OpenAIResponse.success) return PushToast('Completion Failed!', 'error', 5000);
 			OpenAIResText = OpenAIResponse.data;
 		} catch (err) {
 			console.error(err);
@@ -53,18 +56,7 @@
 				focus:ring-2 focus:ring-primary-800"
 				required
 			/>
-			<select
-				bind:value={EngineValue}
-				class="mt-2 rounded-md bg-primary-description p-1 capitalize text-primary-lightest outline-none
-				 focus:ring-1 focus:ring-primary-800"
-				required
-			>
-				<option value="default">Choose your AI 🛠</option>
-				<option value="text-ada-001">text-ada-001: Fastest🦅</option>
-				<option value="text-babbage-001">text-babbage-001</option>
-				<option value="text-curie-001">text-curie-001</option>
-				<option value="text-davinci-002">text-davinci-002: Cleverest🧠</option>
-			</select>
+			<SelectAi bind:EngineValue />
 			<button
 				type="submit"
 				class="rounded-sm bg-primary-lighter p-1 transition-all hover:scale-105 hover:bg-primary-300"
@@ -73,14 +65,7 @@
 		</form>
 	</section>
 
-	<section class="flex w-[50vw] flex-col items-center justify-center">
-		<h2>His Response:</h2>
-		<div
-			class="h-[500px] w-full rounded-md bg-primary-lightest text-lg font-bold shadow-md shadow-primary-headline"
-		>
-			{@html OpenAIResText.replaceAll('\n', '<br />')}
-		</div>
-	</section>
+	<DisplayAiRes {OpenAIResText} />
 </article>
 
 <style>

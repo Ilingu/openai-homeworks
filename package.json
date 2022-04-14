@@ -1,7 +1,7 @@
 {
 	"name": "openai-homeworks",
 	"private": true,
-	"version": "0.1.0-alpha.9",
+	"version": "0.1.0-alpha.10",
 	"description": "OpenAI will do your homeworks (❁´◡`❁)",
 	"keywords": [
 		"OpenAI",
@@ -46,6 +46,7 @@
 		"svelte": "^3.44.0",
 		"svelte-check": "^2.2.6",
 		"svelte-preprocess": "^4.10.1",
+		"svelte-toasts": "^1.1.2",
 		"tailwindcss": "^3.0.23",
 		"tslib": "^2.3.1",
 		"typescript": "~4.6.2"
