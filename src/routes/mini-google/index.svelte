@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Metatags from '$lib/components/Metatags.svelte';
-	import type { OpenAIChoice } from '$lib/interfaces/interfaces';
+	import type { OpenAIResTextObject } from '$lib/interfaces/interfaces';
 	import type { EnginesNames } from '$lib/interfaces/types';
+	import { HandleWorkers } from '$lib/Utils/utils';
 	import { onMount } from 'svelte';
 
 	let InputQuestValue = '';
@@ -11,25 +12,27 @@
 
 	onMount(() => InputQuest?.focus());
 
-	export let data: OpenAIChoice;
 	const HandleSubmit = async () => {
 		try {
+			// Request
 			const OpenAIRes = await fetch(window.location.href, {
 				method: 'POST',
 				body: JSON.stringify({ Engine: EngineValue, Prompt: InputQuestValue })
 			});
-			const OpenAIResDatasText = await OpenAIRes.text();
-			const OpenAIResDatasTextFormatted = OpenAIResDatasText.slice(-5000)
-				.split(`<script type="application/json" sveltekit:data-type="props">`)[1]
-				.split('</script')[0];
-			const OpenAIResDatas: OpenAIChoice = JSON.parse(OpenAIResDatasTextFormatted);
-			OpenAIResText = OpenAIResDatas.text;
+
+			// Response
+			const OpenAIRawResponse = await OpenAIRes.text();
+			const ResWorker = await HandleWorkers('/slice_oai_res_workers.js', OpenAIRawResponse); // Parsing Res
+			if (!ResWorker.success || !ResWorker?.data || !ResWorker.data?.WorkerResult) return;
+
+			const OpenAIResponse = ResWorker.data.WorkerResult as OpenAIResTextObject;
+			console.log(OpenAIResponse);
+			if (!OpenAIResponse.success || !OpenAIResponse?.data) return;
+			OpenAIResText = OpenAIResponse.data;
 		} catch (err) {
 			console.error(err);
 		}
 	};
-
-	console.log(data, 'Front');
 </script>
 
 <!-- Q&A: mini google -->
@@ -70,8 +73,6 @@ A:
 		<h2>His Response:</h2>
 		<textarea class="w-full" bind:value={OpenAIResText} />
 	</section>
-
-	{JSON.stringify(data)}
 </article>
 
 <style>

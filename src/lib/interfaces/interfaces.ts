@@ -9,6 +9,11 @@ export interface ApiRes {
 	body?: object;
 }
 
+export interface OpenAIResTextObject {
+	success: boolean;
+	data?: string;
+}
+
 //#region FuncRes
 interface FunctionResponseShape {
 	success: boolean;
@@ -29,6 +34,10 @@ export interface GetPriceRes extends FunctionResponseShape {
 	data?: {
 		MAX_AI_TOKEN: number;
 	};
+}
+
+export interface GetWorkerRes extends FunctionResponseShape {
+	data?: { WorkerResult: unknown };
 }
 //#endregion
 

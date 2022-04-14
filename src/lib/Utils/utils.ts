@@ -1,3 +1,4 @@
+import type { GetWorkerRes } from '$lib/interfaces/interfaces';
 import type { EnginesNames } from '$lib/interfaces/types';
 
 /**
@@ -26,4 +27,27 @@ export const isValidEngine = (engine: EnginesNames | string): boolean => {
 	if (engine === 'text-davinci-002') return true;
 
 	return false;
+};
+
+export const HandleWorkers = (
+	filePath: string,
+	datasToSend: unknown | unknown[]
+): Promise<GetWorkerRes> => {
+	return new Promise((resolve, rej) => {
+		console.log(window.Worker);
+		if (window.Worker) {
+			try {
+				const myWorker = new Worker(encodeURI(filePath));
+				myWorker.postMessage(datasToSend);
+				myWorker.onmessage = (evt) => {
+					if (!evt?.data || !evt.data?.success) return rej('No Data Sent back');
+
+					const WorkerResult = evt.data;
+					resolve({ success: true, data: { WorkerResult } });
+				};
+			} catch (err) {
+				rej(err);
+			}
+		} else return rej('WebWorkers not supported');
+	});
 };
