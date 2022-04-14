@@ -12,6 +12,7 @@ export interface ApiRes {
 export interface OpenAIResTextObject {
 	success: boolean;
 	data?: string;
+	reason?: string;
 }
 
 //#region FuncRes

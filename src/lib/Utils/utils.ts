@@ -1,4 +1,4 @@
-import type { GetWorkerRes } from '$lib/interfaces/interfaces';
+import type { GetWorkerRes, OpenAIResTextObject } from '$lib/interfaces/interfaces';
 import type { EnginesNames } from '$lib/interfaces/types';
 
 /**
@@ -29,12 +29,51 @@ export const isValidEngine = (engine: EnginesNames | string): boolean => {
 	return false;
 };
 
+/**
+ * Call and Manage OpenAI internal API Request and Response
+ * @param {string} Prompt
+ * @param {EnginesNames} Engine
+ * @returns {OpenAIResTextObject} Return OpenAI Response
+ */
+export const RequestOpenAI = async (
+	Prompt: string,
+	Engine: EnginesNames
+): Promise<OpenAIResTextObject> => {
+	try {
+		// Request
+		const OpenAIRes = await fetch(`${window.location.origin}/api`, {
+			method: 'POST',
+			body: JSON.stringify({ Engine, Prompt })
+		});
+
+		// Response
+		const OpenAIRawResponse = await OpenAIRes.text();
+		const ResWorker = await HandleWorkers('/slice_oai_res_workers.js', OpenAIRawResponse); // Parsing Res
+		if (!ResWorker.success || !ResWorker?.data || !ResWorker.data?.WorkerResult)
+			return { success: false, reason: 'No Data Res' };
+
+		const OpenAIResponse = ResWorker.data.WorkerResult as OpenAIResTextObject;
+		if (!OpenAIResponse.success || !OpenAIResponse?.data)
+			return { success: false, reason: 'No OpenAI Res' };
+
+		return OpenAIResponse;
+	} catch (err) {
+		console.error(err);
+		return { success: false };
+	}
+};
+
+/**
+ * Delegate Complex Operation in another javascript thread
+ * @param {string} filePath
+ * @param {unknown | unknown[]} datasToSend
+ * @returns {GetWorkerRes} Return Worker's Response
+ */
 export const HandleWorkers = (
 	filePath: string,
 	datasToSend: unknown | unknown[]
 ): Promise<GetWorkerRes> => {
 	return new Promise((resolve, rej) => {
-		console.log(window.Worker);
 		if (window.Worker) {
 			try {
 				const myWorker = new Worker(encodeURI(filePath));
