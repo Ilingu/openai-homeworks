@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { IsLoggedIn } from "$lib/stores/SessionStore";
 	// Components
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
@@ -9,11 +10,17 @@
 	import { onMount } from "svelte";
 
 	let InputQuestValue = "";
+	let InputQuestElem: HTMLInputElement;
 	let EngineValue: EnginesNames;
 
 	let OpenAIResText = "";
 
-	let InputQuestElem: HTMLInputElement;
+	let UserLoggedIn = false;
+	IsLoggedIn.subscribe((logged) => {
+		UserLoggedIn = logged;
+		if (!logged) InputQuestValue = "⛔ You are not logged in ⛔";
+		else InputQuestValue = "";
+	});
 	onMount(() => InputQuestElem?.focus());
 
 	const HandleSubmit = async () => {
@@ -34,7 +41,7 @@
 			const OpenAIResponse = await RequestOpenAI(FormattedPrompt, EngineValue);
 			if (!OpenAIResponse.success)
 				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
-			OpenAIResText = OpenAIResponse.data;
+			OpenAIResText = OpenAIResponse.data.text;
 		} catch (err) {
 			console.error(err);
 		}
@@ -52,6 +59,7 @@
 		<form on:submit|preventDefault={HandleSubmit} class="w-full text-center">
 			<input
 				type="text"
+				disabled={!UserLoggedIn}
 				bind:value={InputQuestValue}
 				bind:this={InputQuestElem}
 				placeholder="How many planets in solar system?"
@@ -62,6 +70,7 @@
 			<SelectAi bind:EngineValue />
 			<button
 				type="submit"
+				disabled={!UserLoggedIn}
 				class="rounded-sm bg-primary-lighter p-1 transition-all hover:scale-105 hover:bg-primary-300"
 				><i class="fa-solid fa-robot" /> Submit</button
 			>

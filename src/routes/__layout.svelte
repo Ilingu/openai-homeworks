@@ -1,47 +1,49 @@
 <script lang="ts">
-	import { SessionPassword } from "$lib/SessionStore";
+	import { IsLoggedIn, SessionPassword } from "$lib/stores/SessionStore";
 	// Components
 	import Navbar from "$lib/components/Navbar.svelte";
-	import Login from "$lib/components/login.svelte";
 	// UI
 	import "../styles/Index.css";
 	import { ToastContainer, FlatToast } from "svelte-toasts";
 	import { onMount } from "svelte";
+	import { CheckPasswordReq, PushToast } from "$lib/Utils/utils";
 
-	let Identified = false;
-	let PSWVerified = false;
-	let mounted = false;
+	let LoggedIn = false;
 
-	onMount(() => {
-		mounted = true;
-	});
+	onMount(async () => {
+		const CachedPsw = window.localStorage.getItem("SessionPassword");
+		if (!CachedPsw) return;
 
-	// Login
-	SessionPassword.subscribe((psw) => {
-		if (!psw || psw.trim().length <= 0) return (Identified = false);
-		Identified = true;
-		PSWVerified = true;
-	});
+		try {
+			const Password: string = JSON.parse(CachedPsw);
+			if (!Password || Password.trim().length <= 0)
+				return window.localStorage.removeItem("SessionPassword");
 
-	$: if (!Identified && mounted) {
-		if (window.location.pathname === "/") Identified = true;
-		else {
-			document.body.style.overflow = "hidden";
-			scrollTo(0, 0);
+			const { GoodPsw } = await CheckPasswordReq(Password);
+			if (!GoodPsw) {
+				window.localStorage.removeItem("SessionPassword");
+				SessionPassword.set(undefined);
+				IsLoggedIn.set(false);
+				return PushToast("Password Cached is invalid", "error", 5000, "You have been disconnected");
+			}
+
+			PushToast("Connected", "success", 1500);
+			SessionPassword.set(Password);
+			IsLoggedIn.set(true);
+		} catch (err) {
+			PushToast("Internal Error", "error", 1500, "Couldn't Login");
 		}
-	}
-	$: if (Identified && mounted) {
-		if (window.location.pathname !== "/" && !PSWVerified) Identified = false;
-		else document.body.style.overflow = null;
-	}
+	});
+
+	SessionPassword.subscribe((psw) => {
+		if (!psw || psw.trim().length <= 0) return (LoggedIn = false);
+		LoggedIn = true;
+	});
 </script>
 
 <main class="flex h-screen flex-col">
-	<Navbar />
+	<Navbar {LoggedIn} />
 	<slot />
-	{#if !Identified}
-		<Login />
-	{/if}
 	<ToastContainer placement="top-right" let:data>
 		<FlatToast {data} />
 	</ToastContainer>

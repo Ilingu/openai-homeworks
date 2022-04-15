@@ -1,7 +1,8 @@
-import type { GetWorkerRes, OpenAIResTextObject } from "$lib/interfaces/interfaces";
+import type { GetWorkerRes, LoginResShape, OpenAIResTextObject } from "$lib/interfaces/interfaces";
 import type { EnginesNames, TemperatureVal, ToastType } from "$lib/interfaces/types";
-import { SessionPassword } from "$lib/SessionStore";
+import { IsLoggedIn, SessionPassword } from "$lib/stores/SessionStore";
 import { toasts } from "svelte-toasts";
+import type { ToastProps } from "svelte-toasts/types/common";
 
 /**
  * Check if the url is a valid one
@@ -45,6 +46,20 @@ export const GetSessionPassword = (): Promise<string> => {
 };
 
 /**
+ * Get the login state of the user
+ * @returns {boolean} Return true if the user is logged in
+ */
+export const GetIsLoggedIn = (): Promise<boolean> => {
+	return new Promise((resolve, reject) => {
+		try {
+			IsLoggedIn.subscribe((loggedIn) => resolve(loggedIn));
+		} catch (err) {
+			reject(err);
+		}
+	});
+};
+
+/**
  * Call and Manage OpenAI internal API Request and Response
  * @param {string} Prompt
  * @param {EnginesNames} Engine
@@ -71,7 +86,7 @@ export const RequestOpenAI = async (
 			return { success: false, reason: "No Data Res" };
 
 		const OpenAIResponse = ResWorker.data.WorkerResult as OpenAIResTextObject;
-		if (!OpenAIResponse.success || !OpenAIResponse?.data)
+		if (!OpenAIResponse.success || !OpenAIResponse?.data?.text)
 			return { success: false, reason: "No OpenAI Res" };
 
 		return OpenAIResponse;
@@ -109,9 +124,40 @@ export const HandleWorkers = (
 	});
 };
 
+/**
+ * Call and Manage internal API "/login" Request and Response
+ * @param {string} AuthToken
+ * @returns {{ GoodPsw: boolean }} Return If the given Password is the right one
+ */
+export const CheckPasswordReq = async (AuthToken: string): Promise<{ GoodPsw: boolean }> => {
+	// Request
+	const RightPasswordReq = await fetch(`${window.location.origin}/api/login`, {
+		method: "POST",
+		body: JSON.stringify({ AuthToken })
+	});
+
+	// Response
+	const RightPasswordRawRes = await RightPasswordReq.text();
+	const ResWorker = await HandleWorkers("/slice_oai_res_workers.js", RightPasswordRawRes); // Parsing Res
+	if (!ResWorker.success || !ResWorker?.data || !ResWorker.data?.WorkerResult)
+		return { GoodPsw: false };
+
+	const IsRightPassword = ResWorker.data.WorkerResult as LoginResShape;
+	if (!IsRightPassword?.success || !IsRightPassword?.data?.success) return { GoodPsw: false };
+	return { GoodPsw: true };
+};
+
+/**
+ * Create A Notification in FrontEnd
+ * @param {string} message
+ * @param {ToastType} type
+ * @param {number} duration
+ * @param {string} description
+ * @returns {ToastProps} Return the intanciate notification
+ */
 export const PushToast = (
 	message: string,
 	type: ToastType,
 	duration: number,
 	description?: string
-) => toasts.add({ title: message, duration, type, description });
+): ToastProps => toasts.add({ title: message, duration, type, description: description || "" });

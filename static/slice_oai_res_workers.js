@@ -4,12 +4,12 @@ onmessage = (evt) => {
 	try {
 		const StringToSlice = evt.data;
 
-		const OpenAIResDatasTextFormatted = StringToSlice.split(
+		const ResDatasTextFormatted = StringToSlice.split(
 			`<script type="application/json" sveltekit:data-type="props">`
-		)[1].split('</script>')[0];
-		const OpenAIResDatas = JSON.parse(OpenAIResDatasTextFormatted);
+		)[1].split("</script>")[0];
+		const ResDatas = JSON.parse(ResDatasTextFormatted);
 
-		postMessage({ success: true, data: OpenAIResDatas.text });
+		postMessage({ success: true, data: ResDatas });
 	} catch (err) {
 		postMessage({ success: false });
 	}

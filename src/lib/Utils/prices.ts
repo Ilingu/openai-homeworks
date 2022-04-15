@@ -15,16 +15,16 @@ const MAX_VALUE: PriceShape = {
 		MAX_COMPLETION: 30
 	},
 	"text-curie-001": {
-		MAX_PROMPT: 45,
-		MAX_COMPLETION: 55
+		MAX_PROMPT: 60,
+		MAX_COMPLETION: 70
 	},
 	"text-babbage-001": {
-		MAX_PROMPT: 80,
-		MAX_COMPLETION: 170
+		MAX_PROMPT: 337,
+		MAX_COMPLETION: 338
 	},
 	"text-ada-001": {
-		MAX_PROMPT: 100,
-		MAX_COMPLETION: 200
+		MAX_PROMPT: 500,
+		MAX_COMPLETION: 500
 	}
 };
 
@@ -49,19 +49,20 @@ Davinci
 	 MAX_COST: 60T = 0.0036$/req
 
 Currie
-	 MAX_PROMPT: 45 token
-	 MAX_COMPLETION: 55 token
-	 MAX_COST: 100T = 0.0006$/req
+	 MAX_PROMPT: 60 token
+	 MAX_COMPLETION: 70 token
+	 MAX_COST: 130T = 0.00078$/req
 
 Babbage
-	 MAX_PROMPT: 80 token
-	 MAX_COMPLETION: 170 token
-	 MAX_COST: 250T = 0.0003$/req
+	 MAX_PROMPT: 337 token
+	 MAX_COMPLETION: 338 token
+	 MAX_COST: 675T = 0.00081$/req
 
 Ada
-	 MAX_PROMPT: 100 token
-	 MAX_COMPLETION: 200 token
-	 MAX_COST: 300T = 0.00024$/req
+	 MAX_PROMPT: 500 token
+	 MAX_COMPLETION: 500 token
+	 MAX_COST: 1000T = 0.0008$/req
 */
 
 // MAX_COST = price * nT / 1000
+// nT = 1000 * MAX_COST / price

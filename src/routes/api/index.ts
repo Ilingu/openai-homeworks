@@ -4,7 +4,7 @@ import { OpenAICall } from "$lib/Utils/OpenAI";
 import { GetPrice } from "$lib/Utils/prices";
 import { ReturnError, ReturnSuccess, ParseRequest, Authentificator } from "$lib/Utils/utilsServer";
 
-/** @type {import('./mini-google').RequestHandler} */
+/** @type {import('./api').RequestHandler} */
 export async function post({ request }) {
 	try {
 		/* Parsing Datas + Auth */

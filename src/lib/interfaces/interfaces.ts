@@ -11,7 +11,7 @@ export interface ApiRes {
 
 export interface OpenAIResTextObject {
 	success: boolean;
-	data?: string;
+	data?: { text: string };
 	reason?: string;
 }
 
@@ -41,6 +41,10 @@ export interface GetPriceRes extends FunctionResponseShape {
 
 export interface GetWorkerRes extends FunctionResponseShape {
 	data?: { WorkerResult: unknown };
+}
+
+export interface LoginResShape extends FunctionResponseShape {
+	data: { success: true | undefined };
 }
 //#endregion
 
