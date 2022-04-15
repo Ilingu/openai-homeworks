@@ -1,17 +1,17 @@
 <script lang="ts">
 	// Components
-	import DisplayAiRes from '$lib/components/DisplayAIRes.svelte';
-	import Metatags from '$lib/components/Metatags.svelte';
-	import SelectAi from '$lib/components/SelectAI.svelte';
+	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
+	import Metatags from "$lib/components/Metatags.svelte";
+	import SelectAi from "$lib/components/SelectAI.svelte";
 	// Types
-	import type { EnginesNames } from '$lib/interfaces/types';
-	import { isValidEngine, PushToast, RequestOpenAI } from '$lib/Utils/utils';
-	import { onMount } from 'svelte';
+	import type { EnginesNames } from "$lib/interfaces/types";
+	import { isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { onMount } from "svelte";
 
-	let InputQuestValue = '';
+	let InputQuestValue = "";
 	let EngineValue: EnginesNames;
 
-	let OpenAIResText = '';
+	let OpenAIResText = "";
 
 	let InputQuestElem: HTMLTextAreaElement;
 	onMount(() => InputQuestElem?.focus());
@@ -20,14 +20,15 @@
 		try {
 			InputQuestValue = InputQuestValue.trim();
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue))
-				return PushToast('Bad Arguments', 'warning', 3600);
+				return PushToast("Bad Arguments", "warning", 3600);
 
-			const FormattedQuestion = InputQuestValue.endsWith(':')
+			const FormattedQuestion = InputQuestValue.endsWith(":")
 				? InputQuestValue
 				: `${InputQuestValue}:`;
 
 			const OpenAIResponse = await RequestOpenAI(FormattedQuestion, EngineValue, 0.7);
-			if (!OpenAIResponse.success) return PushToast('Completion Failed!', 'error', 5000);
+			if (!OpenAIResponse.success)
+				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
 			OpenAIResText = OpenAIResponse.data;
 		} catch (err) {
 			console.error(err);

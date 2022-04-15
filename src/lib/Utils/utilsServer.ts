@@ -1,7 +1,10 @@
-import type { ApiRes, ParseReqShape } from '$lib/interfaces/interfaces';
-import type { JSONFormatter, RequestShape, TemperatureVal } from '$lib/interfaces/types';
-import { encode } from 'gpt-3-encoder';
-import { isValidEngine, IsValidURL } from './utils';
+import type { ApiRes, FunctionResponseShape, ParseReqShape } from "$lib/interfaces/interfaces";
+import type { RequestShape, TemperatureVal } from "$lib/interfaces/types";
+import { encode } from "gpt-3-encoder";
+import { isValidEngine, IsValidURL } from "./utils";
+import createKeccakHash from "keccak";
+import dotenv from "dotenv";
+dotenv.config();
 
 /**
  * Return An Internal API Error Object
@@ -10,9 +13,9 @@ import { isValidEngine, IsValidURL } from './utils';
  * @returns Error Object To Send
  */
 export const ReturnError = (reason?: string, http_error_code?: number): ApiRes => {
-	console.error('API_ERROR: ', http_error_code || 500, reason);
+	console.error("API_ERROR: ", http_error_code || 500, reason);
 	return {
-		error: Error(reason || 'Something Went Wrong 😨'),
+		error: Error(reason || "Something Went Wrong 😨"),
 		status: http_error_code || 500
 	};
 };
@@ -34,7 +37,7 @@ export const ReturnSuccess = (data?: object, code?: number): ApiRes => ({
  * @returns Redirect Object To Send
  */
 export const ReturnRedirect = (redirect_uri: string): ApiRes => ({
-	redirect: IsValidURL(redirect_uri) ? redirect_uri : '/',
+	redirect: IsValidURL(redirect_uri) ? redirect_uri : "/",
 	status: 307
 });
 
@@ -47,12 +50,14 @@ export const ParseRequest = async (request: RequestShape): Promise<ParseReqShape
 	const data = await request.json();
 	if (!data) return { success: false };
 
-	const Prompt = data['Prompt'];
-	const Engine = data['Engine'];
-	const Temperature = parseFloat(data['Temperature']) as TemperatureVal;
+	const Prompt = data["Prompt"];
+	const Engine = data["Engine"];
+	const AuthToken = data["AuthToken"];
+	const Temperature = parseFloat(data["Temperature"]) as TemperatureVal;
 
 	if (!Prompt || !Engine || Prompt.trim().length <= 0 || Engine.trim().length <= 0)
 		return { success: false };
+	if (!AuthToken || AuthToken.trim().length <= 0) return { success: false };
 	if (isNaN(Temperature)) return { success: false };
 	if (!isValidEngine(Engine)) return { success: false };
 
@@ -67,4 +72,16 @@ export const ParseRequest = async (request: RequestShape): Promise<ParseReqShape
 export const HowManyTokens = (str: string): number => {
 	const encoded: number[] = encode(str);
 	return encoded?.length || 0;
+};
+
+export const Authentificator = (AuthToken: string): FunctionResponseShape => {
+	const HashedPassword = createKeccakHash("keccak256").update(AuthToken).digest("hex");
+	const RightPassword = process.env.PSW_ENCRYPTED;
+
+	if (!HashedPassword || !RightPassword) return { success: false };
+	if (HashedPassword.trim().length <= 0 || RightPassword.trim().length <= 0)
+		return { success: false };
+	if (HashedPassword !== RightPassword) return { success: false };
+
+	return { success: true };
 };

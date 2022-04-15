@@ -1,6 +1,6 @@
-import type { GetPriceRes } from '$lib/interfaces/interfaces';
-import type { EnginesNames } from '../interfaces/types';
-import { HowManyTokens } from './utilsServer';
+import type { GetPriceRes } from "$lib/interfaces/interfaces";
+import type { EnginesNames } from "../interfaces/types";
+import { HowManyTokens } from "./utilsServer";
 
 type PriceShape = {
 	[EN in EnginesNames]: {
@@ -10,19 +10,19 @@ type PriceShape = {
 };
 
 const MAX_VALUE: PriceShape = {
-	'text-davinci-002': {
-		MAX_PROMPT: 20,
+	"text-davinci-002": {
+		MAX_PROMPT: 30,
 		MAX_COMPLETION: 30
 	},
-	'text-curie-001': {
-		MAX_PROMPT: 27,
-		MAX_COMPLETION: 53
+	"text-curie-001": {
+		MAX_PROMPT: 45,
+		MAX_COMPLETION: 55
 	},
-	'text-babbage-001': {
+	"text-babbage-001": {
 		MAX_PROMPT: 80,
 		MAX_COMPLETION: 170
 	},
-	'text-ada-001': {
+	"text-ada-001": {
 		MAX_PROMPT: 100,
 		MAX_COMPLETION: 200
 	}
@@ -44,14 +44,14 @@ export const GetPrice = (Engine: EnginesNames, Prompt: string): GetPriceRes => {
 
 /*
 Davinci
-	 MAX_PROMPT: 20 token
+	 MAX_PROMPT: 30 token
 	 MAX_COMPLETION: 30 token
-	 MAX_COST: 50T = 0.003$/req
+	 MAX_COST: 60T = 0.0036$/req
 
 Currie
-	 MAX_PROMPT: 27 token
-	 MAX_COMPLETION: 53 token
-	 MAX_COST: 80T = 0.00048$/req
+	 MAX_PROMPT: 45 token
+	 MAX_COMPLETION: 55 token
+	 MAX_COST: 100T = 0.0006$/req
 
 Babbage
 	 MAX_PROMPT: 80 token

@@ -1,6 +1,7 @@
-import type { GetWorkerRes, OpenAIResTextObject } from '$lib/interfaces/interfaces';
-import type { EnginesNames, TemperatureVal, ToastType } from '$lib/interfaces/types';
-import { toasts } from 'svelte-toasts';
+import type { GetWorkerRes, OpenAIResTextObject } from "$lib/interfaces/interfaces";
+import type { EnginesNames, TemperatureVal, ToastType } from "$lib/interfaces/types";
+import { SessionPassword } from "$lib/SessionStore";
+import { toasts } from "svelte-toasts";
 
 /**
  * Check if the url is a valid one
@@ -22,12 +23,25 @@ export const IsValidURL = (url: string): boolean => {
  * @returns {boolean} Return `true` if the engine is valid
  */
 export const isValidEngine = (engine: EnginesNames | string): boolean => {
-	if (engine === 'text-ada-001') return true;
-	if (engine === 'text-babbage-001') return true;
-	if (engine === 'text-curie-001') return true;
-	if (engine === 'text-davinci-002') return true;
+	if (engine === "text-ada-001") return true;
+	if (engine === "text-babbage-001") return true;
+	if (engine === "text-curie-001") return true;
+	if (engine === "text-davinci-002") return true;
 
 	return false;
+};
+
+/**
+ * Get The current Session Password once
+ * @returns {string} Return Session Password
+ */
+export const GetSessionPassword = (): Promise<string> => {
+	return new Promise((resolve, reject) => {
+		SessionPassword.subscribe((psw) => {
+			if (!psw || psw.trim().length <= 0) return reject("No password");
+			resolve(psw);
+		});
+	});
 };
 
 /**
@@ -42,26 +56,28 @@ export const RequestOpenAI = async (
 	Temperature?: TemperatureVal
 ): Promise<OpenAIResTextObject> => {
 	try {
+		const AuthToken = await GetSessionPassword();
+
 		// Request
 		const OpenAIRes = await fetch(`${window.location.origin}/api`, {
-			method: 'POST',
-			body: JSON.stringify({ Engine, Prompt, Temperature: Temperature || 0 })
+			method: "POST",
+			body: JSON.stringify({ Engine, Prompt, AuthToken, Temperature: Temperature || 0 })
 		});
 
 		// Response
 		const OpenAIRawResponse = await OpenAIRes.text();
-		const ResWorker = await HandleWorkers('/slice_oai_res_workers.js', OpenAIRawResponse); // Parsing Res
+		const ResWorker = await HandleWorkers("/slice_oai_res_workers.js", OpenAIRawResponse); // Parsing Res
 		if (!ResWorker.success || !ResWorker?.data || !ResWorker.data?.WorkerResult)
-			return { success: false, reason: 'No Data Res' };
+			return { success: false, reason: "No Data Res" };
 
 		const OpenAIResponse = ResWorker.data.WorkerResult as OpenAIResTextObject;
 		if (!OpenAIResponse.success || !OpenAIResponse?.data)
-			return { success: false, reason: 'No OpenAI Res' };
+			return { success: false, reason: "No OpenAI Res" };
 
 		return OpenAIResponse;
 	} catch (err) {
 		console.error(err);
-		return { success: false };
+		return { success: false, reason: err };
 	}
 };
 
@@ -81,7 +97,7 @@ export const HandleWorkers = (
 				const myWorker = new Worker(encodeURI(filePath));
 				myWorker.postMessage(datasToSend);
 				myWorker.onmessage = (evt) => {
-					if (!evt?.data || !evt.data?.success) return rej('No Data Sent back');
+					if (!evt?.data || !evt.data?.success) return rej("No Data Sent back");
 
 					const WorkerResult = evt.data;
 					resolve({ success: true, data: { WorkerResult } });
@@ -89,9 +105,13 @@ export const HandleWorkers = (
 			} catch (err) {
 				rej(err);
 			}
-		} else return rej('WebWorkers not supported');
+		} else return rej("WebWorkers not supported");
 	});
 };
 
-export const PushToast = (message: string, type: ToastType, duration: number) =>
-	toasts.add({ title: message, duration, type });
+export const PushToast = (
+	message: string,
+	type: ToastType,
+	duration: number,
+	description?: string
+) => toasts.add({ title: message, duration, type, description });

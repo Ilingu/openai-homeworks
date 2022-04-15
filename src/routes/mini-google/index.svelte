@@ -1,17 +1,17 @@
 <script lang="ts">
 	// Components
-	import DisplayAiRes from '$lib/components/DisplayAIRes.svelte';
-	import Metatags from '$lib/components/Metatags.svelte';
-	import SelectAi from '$lib/components/SelectAI.svelte';
+	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
+	import Metatags from "$lib/components/Metatags.svelte";
+	import SelectAi from "$lib/components/SelectAI.svelte";
 	// Types
-	import type { EnginesNames } from '$lib/interfaces/types';
-	import { isValidEngine, PushToast, RequestOpenAI } from '$lib/Utils/utils';
-	import { onMount } from 'svelte';
+	import type { EnginesNames } from "$lib/interfaces/types";
+	import { isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { onMount } from "svelte";
 
-	let InputQuestValue = '';
+	let InputQuestValue = "";
 	let EngineValue: EnginesNames;
 
-	let OpenAIResText = '';
+	let OpenAIResText = "";
 
 	let InputQuestElem: HTMLInputElement;
 	onMount(() => InputQuestElem?.focus());
@@ -20,17 +20,20 @@
 		try {
 			InputQuestValue = InputQuestValue.trim();
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue))
-				return PushToast('Bad Arguments', 'warning', 3600);
-			const FormattedQuestion = InputQuestValue.endsWith('?')
+				return PushToast("Bad Arguments", "warning", 3600);
+
+			const FormattedQuestion = InputQuestValue.endsWith("?")
 				? InputQuestValue
 				: `${InputQuestValue}?`;
-			const FormattedPrompt =
-				EngineValue === 'text-davinci-002' || EngineValue === 'text-curie-001'
-					? FormattedQuestion
-					: `I am a highly intelligent question answering bot. If you ask me a question that is rooted in truth, I will give you the answer.\nQ: ${FormattedQuestion}\nA:`;
+			const FormattedPrompt = `I am a highly intelligent question answering bot.${
+				EngineValue === "text-davinci-002"
+					? ""
+					: " If you ask me a question I will give you the answer."
+			}\nQ: ${FormattedQuestion}\nA:`;
 
 			const OpenAIResponse = await RequestOpenAI(FormattedPrompt, EngineValue);
-			if (!OpenAIResponse.success) return PushToast('Completion Failed!', 'error', 5000);
+			if (!OpenAIResponse.success)
+				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
 			OpenAIResText = OpenAIResponse.data;
 		} catch (err) {
 			console.error(err);

@@ -1,4 +1,4 @@
-import type { EnginesNames, JSONFormatter, TemperatureVal } from './types';
+import type { EnginesNames, JSONFormatter, TemperatureVal } from "./types";
 
 /* Back */
 // Internal ApiRes
@@ -16,7 +16,7 @@ export interface OpenAIResTextObject {
 }
 
 //#region FuncRes
-interface FunctionResponseShape {
+export interface FunctionResponseShape {
 	success: boolean;
 	data?: object;
 }
@@ -28,6 +28,7 @@ export interface ParseReqOpenAIShape extends ParseReqShape {
 	data?: {
 		Prompt: string;
 		Engine: EnginesNames;
+		AuthToken: string;
 		Temperature: string;
 	};
 }

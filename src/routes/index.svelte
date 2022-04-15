@@ -1,54 +1,54 @@
 <script lang="ts">
-	import Metatags from '$lib/components/Metatags.svelte';
+	import { onDestroy, onMount } from "svelte";
 
-	import type { IconDatasShape } from '$lib/interfaces/interfaces';
-
-	import { onDestroy, onMount } from 'svelte';
+	import Metatags from "$lib/components/Metatags.svelte";
+	import type { IconDatasShape } from "$lib/interfaces/interfaces";
 
 	// DOM
 	let h1Elem: HTMLElement;
 	let AnimationInterval: NodeJS.Timer;
 	// Var
 	const HeadingText = [
-		['Homeworks', 'Text', 'Completion 📚'],
-		['Mini', 'Google 🌐'],
-		['It Prepare', 'you for', 'exams 👨‍🎓'],
-		['It Shorten', 'your', 'notes 🗒']
+		["Homeworks", "Text", "Completion 📚"],
+		["Mini", "Google 🌐"],
+		["It Prepare", "you for", "exams 👨‍🎓"],
+		["It Shorten", "your", "notes 🗒"]
 	];
 
 	let TextIndex = 0;
 	let WordIndex = 0;
-	let move: 'forward' | 'backward' = 'forward';
+	let move: "forward" | "backward" = "forward";
 	let skip = 0;
 
 	let currentSentence: string[] = [];
 
-	const RenderH1 = () => (h1Elem.textContent = currentSentence.join(''));
+	const RenderH1 = () => (h1Elem.textContent = currentSentence.join(""));
 	onMount(() => {
+		// Text Animation
 		AnimationInterval = setInterval(() => {
 			if (skip > 0) return skip--;
 
 			const CurrentSentenceIndex = HeadingText[TextIndex];
 			const CurrentWordIndex = CurrentSentenceIndex[WordIndex];
 
-			if (WordIndex < CurrentSentenceIndex.length && move === 'forward') {
+			if (WordIndex < CurrentSentenceIndex.length && move === "forward") {
 				currentSentence = [...currentSentence, ` ${CurrentWordIndex}`];
 				RenderH1();
 				WordIndex++;
 			}
-			if (WordIndex >= CurrentSentenceIndex.length && move === 'forward') {
+			if (WordIndex >= CurrentSentenceIndex.length && move === "forward") {
 				skip = 3;
-				return (move = 'backward');
+				return (move = "backward");
 			}
 
-			if (WordIndex !== 0 && move === 'backward') {
+			if (WordIndex !== 0 && move === "backward") {
 				currentSentence.pop();
 				RenderH1();
 				WordIndex--;
 			}
 
-			if (WordIndex <= 0 && move === 'backward') {
-				move = 'forward';
+			if (WordIndex <= 0 && move === "backward") {
+				move = "forward";
 				if (TextIndex >= HeadingText.length - 1) return (TextIndex = 0);
 
 				TextIndex++;
@@ -63,19 +63,19 @@
 		const [R, G, B] = Array(3)
 			.fill(0)
 			.map(() => Math.round(Math.random() * 255)) as [number, number, number];
-		let WoB = '#ffffff';
+		let WoB = "#ffffff";
 
-		if (R * 0.299 + G * 0.587 + B * 0.114 > 186) WoB = '#000000';
+		if (R * 0.299 + G * 0.587 + B * 0.114 > 186) WoB = "#000000";
 		return `background-color: rgb(${R}, ${G}, ${B}); color: ${WoB};`;
 	};
 	$: RGBColor = () => RandomRGBValue();
 
 	const IconsDatas: IconDatasShape[] = [
-		{ icon: 'fa-solid fa-message', desc: 'Text Completion', href: '/text-completion' },
-		{ icon: 'fa-brands fa-google', desc: 'Mini Google', href: '/mini-google' },
-		{ icon: 'fa-solid fa-book', desc: 'Summarize Notes', href: '/summarize' },
-		{ icon: 'fa-solid fa-spell-check', desc: 'Grammar Check', href: '/grammar' },
-		{ icon: 'fa-solid fa-briefcase', desc: 'Job Interview', href: '/job-interview' }
+		{ icon: "fa-solid fa-message", desc: "Text Completion", href: "/text-completion" },
+		{ icon: "fa-brands fa-google", desc: "Mini Google", href: "/mini-google" },
+		{ icon: "fa-solid fa-book", desc: "Summarize Notes", href: "/summarize" },
+		{ icon: "fa-solid fa-spell-check", desc: "Grammar Check", href: "/grammar" },
+		{ icon: "fa-solid fa-briefcase", desc: "Job Interview", href: "/job-interview" }
 	];
 </script>
 
