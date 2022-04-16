@@ -1,7 +1,7 @@
 {
 	"name": "openai-homeworks",
 	"private": true,
-	"version": "1.0.0-beta.1",
+	"version": "1.0.1-beta.1",
 	"description": "OpenAI will do your homeworks (❁´◡`❁)",
 	"keywords": [
 		"OpenAI",
