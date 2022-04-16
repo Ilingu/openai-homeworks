@@ -9,7 +9,7 @@
 	import Form from "$lib/components/Form.svelte";
 
 	let InputQuestValue = "";
-	let InputQuestElem: HTMLTextAreaElement;
+	let InputQuestElem: HTMLInputElement;
 
 	let OpenAIResText = "";
 
@@ -21,12 +21,6 @@
 	});
 	onMount(() => InputQuestElem?.focus());
 
-	$: SentencePlaceholder = [
-		"Write a thanks you message for my mom birthday:",
-		"Convert 100 days to seconds:",
-		"What are 5 key points I should know when studying Ancient Rome?"
-	][Math.round(Math.random() * 2)];
-
 	const HandleSubmit = async () => {
 		try {
 			const EngineValue = await GetEngineStore();
@@ -34,11 +28,16 @@
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue))
 				return PushToast("Bad Arguments", "warning", 3600);
 
-			const FormattedQuestion = InputQuestValue.endsWith(":")
+			const FormattedQuestion = InputQuestValue.endsWith("?")
 				? InputQuestValue
-				: `${InputQuestValue}:`;
+				: `${InputQuestValue}?`;
+			const FormattedPrompt = `I am a highly intelligent question answering bot.${
+				EngineValue === "text-davinci-002"
+					? ""
+					: " If you ask me a question I will give you the answer."
+			}\nQ: ${FormattedQuestion}\nA:`;
 
-			const OpenAIResponse = await RequestOpenAI(FormattedQuestion, EngineValue, 0.7);
+			const OpenAIResponse = await RequestOpenAI(FormattedPrompt, EngineValue);
 			if (!OpenAIResponse.success)
 				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
 			OpenAIResText = OpenAIResponse.data.text;
@@ -50,21 +49,28 @@
 
 <Metatags />
 <article class="middle w-full">
-	<h1 class="text-3xl font-semibold text-primary-800 xs:text-4xl">
-		<i class="fa-solid fa-message" /> Text Completion
+	<h1 class="text-4xl font-semibold text-primary-800">
+		<i class="fa-brands fa-google" /> Mini Google
 	</h1>
 
-	<Form {HandleSubmit} {UserLoggedIn}
-		><textarea
+	<Form {HandleSubmit} {UserLoggedIn}>
+		<input
+			type="text"
+			disabled={!UserLoggedIn}
 			bind:value={InputQuestValue}
 			bind:this={InputQuestElem}
-			disabled={!UserLoggedIn}
-			placeholder={SentencePlaceholder}
+			placeholder="How many planets in solar system?"
+			class="w-full rounded bg-primary-800 bg-opacity-60 p-3 text-xl font-semibold text-primary-lightest shadow-md 
+      shadow-primary-description outline-none transition-all focus:ring-2 focus:ring-primary-800"
 			required
-			class="h-32 w-full rounded-md bg-primary-lightest p-5 text-lg font-semibold shadow-md shadow-primary-headline 
-				outline-none focus:ring-1 focus:ring-primary-800"
-		/></Form
-	>
+		/>
+	</Form>
 
 	<DisplayAiRes {OpenAIResText} />
 </article>
+
+<style>
+	input::placeholder {
+		color: #ddd;
+	}
+</style>

@@ -4,7 +4,23 @@
 /* Tailwind */
 @layer components {
   .middle {
-    @apply grid place-content-center place-items-center;
+    @apply grid flex-1 place-content-center place-items-center;
   }
+}
+
+* {
+  font-family: 'Courier New', Courier, monospace;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+::-moz-selection {
+  color: #feffe7;
+  background: #4c310a;
+}
+
+::selection {
+  color: #feffe7;
+  background: #4c310a;
 }
 /*# sourceMappingURL=Index.css.map */
