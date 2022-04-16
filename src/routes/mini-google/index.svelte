@@ -4,9 +4,8 @@
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
 	// Types
-	import type { EnginesNames } from "$lib/interfaces/types";
-	import { isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
-	import { getContext, onMount } from "svelte";
+	import { GetEngineStore, isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { onMount } from "svelte";
 	import Form from "$lib/components/Form.svelte";
 
 	let InputQuestValue = "";
@@ -24,7 +23,7 @@
 
 	const HandleSubmit = async () => {
 		try {
-			const { EngineValue } = getContext("FormEngineValue") as { EngineValue: EnginesNames };
+			const EngineValue = await GetEngineStore();
 			InputQuestValue = InputQuestValue.trim();
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue))
 				return PushToast("Bad Arguments", "warning", 3600);
@@ -61,8 +60,8 @@
 			bind:value={InputQuestValue}
 			bind:this={InputQuestElem}
 			placeholder="How many planets in solar system?"
-			class="w-full rounded bg-primary-800 p-3 text-xl font-semibold text-primary-lightest outline-none transition-all 
-				focus:ring-2 focus:ring-primary-800"
+			class="w-full rounded bg-primary-800 bg-opacity-60 p-3 text-xl font-semibold text-primary-lightest shadow-md 
+      shadow-primary-description outline-none transition-all focus:ring-2 focus:ring-primary-800"
 			required
 		/>
 	</Form>

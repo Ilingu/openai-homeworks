@@ -75,6 +75,7 @@
 		{ icon: "fa-brands fa-google", desc: "Mini Google", href: "/mini-google" },
 		{ icon: "fa-solid fa-book", desc: "Summarize Notes", href: "/summarize" },
 		{ icon: "fa-solid fa-spell-check", desc: "Grammar Check", href: "/grammar" },
+		{ icon: "fa-solid fa-language", desc: "Translation", href: "/translation" },
 		{ icon: "fa-solid fa-briefcase", desc: "Job Interview", href: "/job-interview" }
 	];
 </script>

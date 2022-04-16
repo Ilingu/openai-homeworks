@@ -5,11 +5,14 @@
 	// UI
 	import "../styles/Index.css";
 	import { ToastContainer, FlatToast } from "svelte-toasts";
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import { CheckPasswordReq, PushToast } from "$lib/Utils/utils";
+	// Types
+	import type { Unsubscriber } from "svelte/store";
 
 	let LoggedIn = false;
 
+	let unsub: Unsubscriber;
 	onMount(async () => {
 		const CachedPsw = window.localStorage.getItem("SessionPassword");
 		if (!CachedPsw) return;
@@ -34,8 +37,9 @@
 			PushToast("Internal Error", "error", 1500, "Couldn't Login");
 		}
 	});
+	onDestroy(() => unsub());
 
-	SessionPassword.subscribe((psw) => {
+	unsub = SessionPassword.subscribe((psw) => {
 		if (!psw || psw.trim().length <= 0) return (LoggedIn = false);
 		LoggedIn = true;
 	});

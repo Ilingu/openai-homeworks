@@ -7,6 +7,10 @@
 	<div
 		class="max-h-[400px] min-h-[100px] w-[95%] overflow-y-auto rounded-md bg-primary-lightest p-4 text-lg font-bold shadow-md shadow-primary-headline md:w-3/4 xl:w-1/2"
 	>
-		{@html OpenAIResText.replaceAll("\n", "<br />")}
+		{#if OpenAIResText}
+			{@html OpenAIResText.replaceAll("\n", "<br />")}
+		{:else}
+			🤖💭 Waiting your request...
+		{/if}
 	</div>
 </section>

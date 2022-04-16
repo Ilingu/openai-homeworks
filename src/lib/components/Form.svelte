@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EnginesNames } from "$lib/interfaces/types";
-	import { setContext } from "svelte";
+	import { EngineStore } from "$lib/stores/PropsStores";
 	import type { ToastProps } from "svelte-toasts/types/common";
 	import SelectAi from "./SelectAI.svelte";
 
@@ -8,18 +8,14 @@
 	export let UserLoggedIn: boolean;
 
 	let EngineValue: EnginesNames;
-	const SetTheContext = () => {
-		setContext("FormEngineValue", {
-			EngineValue
-		});
-	};
+	const SetEngine = () => EngineStore.set(EngineValue);
 </script>
 
 <section class="my-8 flex w-[100vw] flex-col items-center justify-center">
 	<h2>Your request:</h2>
 	<form
 		on:submit|preventDefault={() => {
-			SetTheContext();
+			SetEngine();
 			HandleSubmit();
 		}}
 		class="w-[95%] text-center md:w-3/4 xl:w-1/2"

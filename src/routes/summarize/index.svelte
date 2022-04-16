@@ -4,9 +4,8 @@
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
 	// Types
-	import type { EnginesNames } from "$lib/interfaces/types";
-	import { isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
-	import { getContext, onMount } from "svelte";
+	import { GetEngineStore, isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { onMount } from "svelte";
 	import Form from "$lib/components/Form.svelte";
 
 	type MethodsSummaryNames = "grader" | "notes";
@@ -27,7 +26,7 @@
 
 	const HandleSubmit = async () => {
 		try {
-			const { EngineValue } = getContext("FormEngineValue") as { EngineValue: EnginesNames };
+			const EngineValue = await GetEngineStore();
 			InputQuestValue = InputQuestValue.trim();
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue) || !isValidMethodName())
 				return PushToast("Bad Arguments", "warning", 3600);
@@ -72,6 +71,7 @@
 			bind:value={InputQuestValue}
 			bind:this={InputQuestElem}
 			required
+			placeholder="Note to summarize"
 			class="h-32 w-full rounded-md bg-primary-lightest p-5 text-lg font-semibold shadow-md shadow-primary-headline outline-none focus:ring-1 focus:ring-primary-800"
 		/>
 		<select

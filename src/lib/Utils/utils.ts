@@ -1,5 +1,6 @@
 import type { GetWorkerRes, LoginResShape, OpenAIResTextObject } from "$lib/interfaces/interfaces";
 import type { EnginesNames, TemperatureVal, ToastType } from "$lib/interfaces/types";
+import { EngineStore } from "$lib/stores/PropsStores";
 import { IsLoggedIn, SessionPassword } from "$lib/stores/SessionStore";
 import { toasts } from "svelte-toasts";
 import type { ToastProps } from "svelte-toasts/types/common";
@@ -36,14 +37,24 @@ export const isValidEngine = (engine: EnginesNames | string): boolean => {
  * Get The current Session Password once
  * @returns {string} Return Session Password
  */
-export const GetSessionPassword = (): Promise<string> => {
-	return new Promise((resolve, reject) => {
-		SessionPassword.subscribe((psw) => {
+export const GetSessionPassword = (): Promise<string> =>
+	new Promise((resolve, reject) => {
+		const unsub = SessionPassword.subscribe((psw) => {
 			if (!psw || psw.trim().length <= 0) return reject("No password");
 			resolve(psw);
 		});
+		unsub();
 	});
-};
+
+/**
+ * Get The value of Engine Store
+ * @returns {EnginesNames} Return EngineValue
+ */
+export const GetEngineStore = (): Promise<EnginesNames> =>
+	new Promise((resolve) => {
+		const unsub = EngineStore.subscribe((EngineValue) => resolve(EngineValue as EnginesNames));
+		unsub();
+	});
 
 /**
  * Call and Manage OpenAI internal API Request and Response
