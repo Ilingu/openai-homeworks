@@ -1,7 +1,7 @@
 {
 	"name": "openai-homeworks",
 	"private": true,
-	"version": "1.0.1-beta.2",
+	"version": "1.0.3-beta.3",
 	"description": "OpenAI will do your homeworks (❁´◡`❁)",
 	"keywords": [
 		"OpenAI",
@@ -16,6 +16,7 @@
 		"url": "https://github.com/Ilingu/openai-homeworks"
 	},
 	"scripts": {
+		"vercel": "vercel dev",
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
