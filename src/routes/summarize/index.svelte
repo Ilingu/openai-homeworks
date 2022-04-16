@@ -3,17 +3,16 @@
 	// Components
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
-	import SelectAi from "$lib/components/SelectAI.svelte";
 	// Types
 	import type { EnginesNames } from "$lib/interfaces/types";
 	import { isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
-	import { onMount } from "svelte";
+	import { getContext, onMount } from "svelte";
+	import Form from "$lib/components/Form.svelte";
 
 	type MethodsSummaryNames = "grader" | "notes";
 
 	let InputQuestValue = "";
 	let InputQuestElem: HTMLTextAreaElement;
-	let EngineValue: EnginesNames;
 	let MethodSummary: MethodsSummaryNames;
 
 	let OpenAIResText = "";
@@ -28,6 +27,7 @@
 
 	const HandleSubmit = async () => {
 		try {
+			const { EngineValue } = getContext("FormEngineValue") as { EngineValue: EnginesNames };
 			InputQuestValue = InputQuestValue.trim();
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue) || !isValidMethodName())
 				return PushToast("Bad Arguments", "warning", 3600);
@@ -66,35 +66,25 @@
 		<i class="fa-solid fa-book" /> Summarize
 	</h1>
 
-	<section class="my-8 flex w-[50vw] flex-col items-center justify-center">
-		<h2>Note to summarize:</h2>
-		<form on:submit|preventDefault={HandleSubmit} class="w-full text-center">
-			<textarea
-				disabled={!UserLoggedIn}
-				bind:value={InputQuestValue}
-				bind:this={InputQuestElem}
-				required
-				class="h-32 w-full rounded-md bg-primary-lightest p-5 text-lg font-semibold shadow-md shadow-primary-headline outline-none focus:ring-1 focus:ring-primary-800"
-			/>
-			<SelectAi bind:EngineValue />
-			<select
-				bind:value={MethodSummary}
-				class="mt-2 rounded-md bg-primary-description p-1 capitalize text-primary-lightest outline-none
+	<Form {HandleSubmit} {UserLoggedIn}>
+		<textarea
+			disabled={!UserLoggedIn}
+			bind:value={InputQuestValue}
+			bind:this={InputQuestElem}
+			required
+			class="h-32 w-full rounded-md bg-primary-lightest p-5 text-lg font-semibold shadow-md shadow-primary-headline outline-none focus:ring-1 focus:ring-primary-800"
+		/>
+		<select
+			bind:value={MethodSummary}
+			class="mt-2 rounded-md bg-primary-description p-1 capitalize text-primary-lightest outline-none
 				 focus:ring-1 focus:ring-primary-800"
-				required
-			>
-				<option value="default">Choose Methods to summarize</option>
-				<option value="grader">Summarize for a 2nd grader</option>
-				<option value="notes">Notes to summary</option>
-			</select>
-			<button
-				type="submit"
-				disabled={!UserLoggedIn}
-				class="rounded-sm bg-primary-lighter p-1 transition-all hover:scale-105 hover:bg-primary-300"
-				><i class="fa-solid fa-robot" /> Submit</button
-			>
-		</form>
-	</section>
+			required
+		>
+			<option value="default">Choose Methods to summarize</option>
+			<option value="grader">Summarize for a 2nd grader</option>
+			<option value="notes">Notes to summary</option>
+		</select>
+	</Form>
 
 	<DisplayAiRes {OpenAIResText} />
 </article>

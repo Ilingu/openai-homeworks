@@ -46,20 +46,6 @@ export const GetSessionPassword = (): Promise<string> => {
 };
 
 /**
- * Get the login state of the user
- * @returns {boolean} Return true if the user is logged in
- */
-export const GetIsLoggedIn = (): Promise<boolean> => {
-	return new Promise((resolve, reject) => {
-		try {
-			IsLoggedIn.subscribe((loggedIn) => resolve(loggedIn));
-		} catch (err) {
-			reject(err);
-		}
-	});
-};
-
-/**
  * Call and Manage OpenAI internal API Request and Response
  * @param {string} Prompt
  * @param {EnginesNames} Engine

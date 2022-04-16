@@ -3,15 +3,14 @@
 	// Components
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
-	import SelectAi from "$lib/components/SelectAI.svelte";
 	// Types
 	import type { EnginesNames } from "$lib/interfaces/types";
 	import { isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
-	import { onMount } from "svelte";
+	import { getContext, onMount } from "svelte";
+	import Form from "$lib/components/Form.svelte";
 
 	let InputQuestValue = "";
 	let InputQuestElem: HTMLTextAreaElement;
-	let EngineValue: EnginesNames;
 
 	let OpenAIResText = "";
 
@@ -25,6 +24,7 @@
 
 	const HandleSubmit = async () => {
 		try {
+			const { EngineValue } = getContext("FormEngineValue") as { EngineValue: EnginesNames };
 			InputQuestValue = InputQuestValue.trim();
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue))
 				return PushToast("Bad Arguments", "warning", 3600);
@@ -43,33 +43,22 @@
 	};
 </script>
 
-<!-- Generating text -->
-
 <Metatags />
 <article class="middle w-full">
-	<h1 class="text-4xl font-semibold text-primary-800">
+	<h1 class="text-3xl font-semibold text-primary-800 xs:text-4xl">
 		<i class="fa-solid fa-message" /> Text Completion
 	</h1>
 
-	<section class="my-8 flex w-[50vw] flex-col items-center justify-center">
-		<h2>Your request:</h2>
-		<form on:submit|preventDefault={HandleSubmit} class="w-full text-center">
-			<textarea
-				bind:value={InputQuestValue}
-				bind:this={InputQuestElem}
-				disabled={!UserLoggedIn}
-				required
-				class="h-32 w-full rounded-md bg-primary-lightest p-5 text-lg font-semibold shadow-md shadow-primary-headline outline-none focus:ring-1 focus:ring-primary-800"
-			/>
-			<SelectAi bind:EngineValue />
-			<button
-				type="submit"
-				disabled={!UserLoggedIn}
-				class="rounded-sm bg-primary-lighter p-1 transition-all hover:scale-105 hover:bg-primary-300"
-				><i class="fa-solid fa-robot" /> Submit</button
-			>
-		</form>
-	</section>
+	<Form {HandleSubmit} {UserLoggedIn}
+		><textarea
+			bind:value={InputQuestValue}
+			bind:this={InputQuestElem}
+			disabled={!UserLoggedIn}
+			required
+			class="h-32 w-full rounded-md bg-primary-lightest p-5 text-lg font-semibold shadow-md shadow-primary-headline 
+				outline-none focus:ring-1 focus:ring-primary-800"
+		/></Form
+	>
 
 	<DisplayAiRes {OpenAIResText} />
 </article>

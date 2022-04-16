@@ -3,15 +3,14 @@
 	// Components
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
-	import SelectAi from "$lib/components/SelectAI.svelte";
 	// Types
 	import type { EnginesNames } from "$lib/interfaces/types";
 	import { isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
-	import { onMount } from "svelte";
+	import { getContext, onMount } from "svelte";
+	import Form from "$lib/components/Form.svelte";
 
 	let InputQuestValue = "";
 	let InputQuestElem: HTMLInputElement;
-	let EngineValue: EnginesNames;
 
 	let OpenAIResText = "";
 
@@ -25,6 +24,7 @@
 
 	const HandleSubmit = async () => {
 		try {
+			const { EngineValue } = getContext("FormEngineValue") as { EngineValue: EnginesNames };
 			InputQuestValue = InputQuestValue.trim();
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue))
 				return PushToast("Bad Arguments", "warning", 3600);
@@ -54,28 +54,18 @@
 		<i class="fa-brands fa-google" /> Mini Google
 	</h1>
 
-	<section class="my-8 flex w-[50vw] flex-col items-center justify-center">
-		<h2>Your request:</h2>
-		<form on:submit|preventDefault={HandleSubmit} class="w-full text-center">
-			<input
-				type="text"
-				disabled={!UserLoggedIn}
-				bind:value={InputQuestValue}
-				bind:this={InputQuestElem}
-				placeholder="How many planets in solar system?"
-				class="w-full rounded bg-primary-800 p-3 text-xl font-semibold text-primary-lightest outline-none transition-all 
+	<Form {HandleSubmit} {UserLoggedIn}>
+		<input
+			type="text"
+			disabled={!UserLoggedIn}
+			bind:value={InputQuestValue}
+			bind:this={InputQuestElem}
+			placeholder="How many planets in solar system?"
+			class="w-full rounded bg-primary-800 p-3 text-xl font-semibold text-primary-lightest outline-none transition-all 
 				focus:ring-2 focus:ring-primary-800"
-				required
-			/>
-			<SelectAi bind:EngineValue />
-			<button
-				type="submit"
-				disabled={!UserLoggedIn}
-				class="rounded-sm bg-primary-lighter p-1 transition-all hover:scale-105 hover:bg-primary-300"
-				><i class="fa-solid fa-robot" /> Submit</button
-			>
-		</form>
-	</section>
+			required
+		/>
+	</Form>
 
 	<DisplayAiRes {OpenAIResText} />
 </article>
