@@ -1,4 +1,4 @@
-import { EnginesNames, JSONFormatter } from "./_types";
+import type { EnginesNames, JSONFormatter } from "./_types";
 
 /* Back */
 // Internal ApiRes

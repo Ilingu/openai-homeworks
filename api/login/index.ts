@@ -1,5 +1,6 @@
-import { VercelResponse, VercelRequest } from "@vercel/node";
-import { ApiRes } from "../interface/_interfaces";
+import type { VercelResponse, VercelRequest } from "@vercel/node";
+
+import type { ApiRes } from "../interface/_interfaces";
 import { Authentificator, HandleError, HandleSuccess } from "../utils/_utilsServer";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

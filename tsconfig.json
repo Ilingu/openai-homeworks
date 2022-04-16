@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
-		"preserveValueImports": false
+		"preserveValueImports": false,
+		"removeComments": true
 	},
 	"extends": "./.svelte-kit/tsconfig.json"
 }

@@ -1,4 +1,4 @@
-import { EnginesNames } from "../interface/_types";
+import type { EnginesNames } from "../interface/_types";
 
 /**
  * Check if the url is a valid one
