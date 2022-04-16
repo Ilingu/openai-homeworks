@@ -6,7 +6,7 @@
 	import Metatags from "$lib/components/Metatags.svelte";
 	import Form from "$lib/components/Form.svelte";
 	// Types
-	import { GetEngineStore, isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { GetEngineStore, isValidEngine, PushToast, CallApi } from "$lib/Utils/utils";
 	type LanguageNames = "french" | "english";
 
 	let InputQuestValue = "";
@@ -47,9 +47,14 @@
 				: `${InputQuestValue}.`;
 			const FormattedPrompt = `Translate this ${InputLang} text into ${OutputLang}:\n\n${FormattedQuestion}`;
 
-			const OpenAIResponse = await RequestOpenAI(FormattedPrompt, EngineValue, 0.3);
-			if (!OpenAIResponse.success)
-				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
+			const OpenAIResponse = await CallApi({
+				METHOD: "POST",
+				URI: "/api/openai",
+				body: { Prompt: FormattedPrompt, Engine: EngineValue, Temperature: 0.3 }
+			});
+			if (!OpenAIResponse.succeed || !OpenAIResponse?.data?.text)
+				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.message);
+
 			OpenAIResText = OpenAIResponse.data.text;
 		} catch (err) {
 			console.error(err);

@@ -1,6 +1,6 @@
-import type { GetPriceRes } from "$lib/interfaces/interfaces";
-import type { EnginesNames } from "../interfaces/types";
-import { HowManyTokens } from "./utilsServer";
+import type { GetPriceRes } from "../interface/_interfaces";
+import type { EnginesNames } from "../../src/lib/interfaces/types";
+import { HowManyTokens } from "./_utilsServer";
 
 type PriceShape = {
 	[EN in EnginesNames]: {

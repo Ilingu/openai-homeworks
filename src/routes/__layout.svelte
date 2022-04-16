@@ -6,7 +6,7 @@
 	import "../styles/Index.css";
 	import { ToastContainer, FlatToast } from "svelte-toasts";
 	import { onDestroy, onMount } from "svelte";
-	import { CheckPasswordReq, PushToast } from "$lib/Utils/utils";
+	import { CallApi, PushToast } from "$lib/Utils/utils";
 	// Types
 	import type { Unsubscriber } from "svelte/store";
 
@@ -22,8 +22,13 @@
 			if (!Password || Password.trim().length <= 0)
 				return window.localStorage.removeItem("SessionPassword");
 
-			const { GoodPsw } = await CheckPasswordReq(Password);
-			if (!GoodPsw) {
+			const { succeed } = await CallApi({
+				AuthToken: Password,
+				METHOD: "GET",
+				URI: "/api/login"
+			});
+
+			if (!succeed) {
 				window.localStorage.removeItem("SessionPassword");
 				SessionPassword.set(undefined);
 				IsLoggedIn.set(false);

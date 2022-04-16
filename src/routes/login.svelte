@@ -2,7 +2,7 @@
 	import Metatags from "$lib/components/Metatags.svelte";
 
 	import { IsLoggedIn, SessionPassword } from "$lib/stores/SessionStore";
-	import { CheckPasswordReq, PushToast } from "$lib/Utils/utils";
+	import { CallApi, PushToast } from "$lib/Utils/utils";
 	import { onMount } from "svelte";
 
 	let IAuthToken = "";
@@ -17,8 +17,12 @@
 			return PushToast("No Password", "warning", 2500, "Please Fill The Input");
 
 		try {
-			const { GoodPsw } = await CheckPasswordReq(IAuthToken);
-			if (!GoodPsw) return PushToast("Wrong Password", "error", 5000, "Try again");
+			const { succeed, message } = await CallApi({
+				AuthToken: IAuthToken,
+				METHOD: "GET",
+				URI: "/api/login"
+			});
+			if (!succeed) return PushToast("Wrong Password", "error", 5000, message);
 			PushToast("Successfully Logged In!", "success", 5000, "Password Save in memory");
 
 			// Save psw in store

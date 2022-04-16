@@ -1,7 +1,7 @@
-import type { GetWorkerRes, LoginResShape, OpenAIResTextObject } from "$lib/interfaces/interfaces";
+import type { ApiRes, CallApiArgs, GetWorkerRes } from "$lib/interfaces/interfaces";
 import type { EnginesNames, TemperatureVal, ToastType } from "$lib/interfaces/types";
 import { EngineStore } from "$lib/stores/PropsStores";
-import { IsLoggedIn, SessionPassword } from "$lib/stores/SessionStore";
+import { SessionPassword } from "$lib/stores/SessionStore";
 import { toasts } from "svelte-toasts";
 import type { ToastProps } from "svelte-toasts/types/common";
 
@@ -62,86 +62,55 @@ export const GetEngineStore = (): Promise<EnginesNames> =>
  * @param {EnginesNames} Engine
  * @returns {OpenAIResTextObject} Return OpenAI Response
  */
-export const RequestOpenAI = async (
-	Prompt: string,
-	Engine: EnginesNames,
-	Temperature?: TemperatureVal
-): Promise<OpenAIResTextObject> => {
+// export const RequestOpenAI = async (
+// 	Prompt: string,
+// 	Engine: EnginesNames,
+// 	Temperature?: TemperatureVal
+// ): Promise<OpenAIResTextObject> => {
+// 	try {
+// 		const AuthToken = await GetSessionPassword();
+
+// 		// Request
+// 		const OpenAIRes = await fetch(`${window.location.origin}/api`, {
+// 			method: "POST",
+// 			body: JSON.stringify({ Engine, Prompt, Temperature: Temperature || 0 }),
+// 			headers: { authorization: AuthToken }
+// 		});
+
+// 		// Response
+// 		const OpenAIRawResponse = await OpenAIRes.json();
+// 		console.log(OpenAIRawResponse);
+// 		return;
+// 	} catch (err) {
+// 		console.error(err);
+// 		return { success: false, reason: err };
+// 	}
+// };
+
+/**
+ * Call internal API endpoint and Manage the result
+ * @param {CallApiArgs} FetchArgs
+ * @returns {ApiRes} Return Internal API Raw Response
+ */
+export const CallApi = async ({ URI, METHOD, AuthToken, body }: CallApiArgs): Promise<ApiRes> => {
 	try {
-		const AuthToken = await GetSessionPassword();
+		const URL = encodeURI(`${window.location.origin}${URI}`);
+		if (!AuthToken) AuthToken = await GetSessionPassword();
+		if (!IsValidURL(URL)) throw new Error("Unvalid URL");
 
 		// Request
-		const OpenAIRes = await fetch(`${window.location.origin}/api`, {
-			method: "POST",
-			body: JSON.stringify({ Engine, Prompt, AuthToken, Temperature: Temperature || 0 })
+		const APIRequest = await fetch(URL, {
+			method: METHOD,
+			body: JSON.stringify(body),
+			headers: { authorization: AuthToken }
 		});
 
 		// Response
-		const OpenAIRawResponse = await OpenAIRes.text();
-		const ResWorker = await HandleWorkers("/slice_oai_res_workers.js", OpenAIRawResponse); // Parsing Res
-		if (!ResWorker.success || !ResWorker?.data || !ResWorker.data?.WorkerResult)
-			return { success: false, reason: "No Data Res" };
-
-		const OpenAIResponse = ResWorker.data.WorkerResult as OpenAIResTextObject;
-		if (!OpenAIResponse.success || !OpenAIResponse?.data?.text)
-			return { success: false, reason: "No OpenAI Res" };
-
-		return OpenAIResponse;
+		const APIResponse: ApiRes = await APIRequest.json();
+		return APIResponse;
 	} catch (err) {
-		console.error(err);
-		return { success: false, reason: err };
+		return { succeed: false, code: 500, message: err };
 	}
-};
-
-/**
- * Delegate Complex Operation in another javascript thread
- * @param {string} filePath
- * @param {unknown | unknown[]} datasToSend
- * @returns {GetWorkerRes} Return Worker's Response
- */
-export const HandleWorkers = (
-	filePath: string,
-	datasToSend: unknown | unknown[]
-): Promise<GetWorkerRes> => {
-	return new Promise((resolve, rej) => {
-		if (window.Worker) {
-			try {
-				const myWorker = new Worker(encodeURI(filePath));
-				myWorker.postMessage(datasToSend);
-				myWorker.onmessage = (evt) => {
-					if (!evt?.data || !evt.data?.success) return rej("No Data Sent back");
-
-					const WorkerResult = evt.data;
-					resolve({ success: true, data: { WorkerResult } });
-				};
-			} catch (err) {
-				rej(err);
-			}
-		} else return rej("WebWorkers not supported");
-	});
-};
-
-/**
- * Call and Manage internal API "/login" Request and Response
- * @param {string} AuthToken
- * @returns {{ GoodPsw: boolean }} Return If the given Password is the right one
- */
-export const CheckPasswordReq = async (AuthToken: string): Promise<{ GoodPsw: boolean }> => {
-	// Request
-	const RightPasswordReq = await fetch(`${window.location.origin}/api/login`, {
-		method: "POST",
-		body: JSON.stringify({ AuthToken })
-	});
-
-	// Response
-	const RightPasswordRawRes = await RightPasswordReq.text();
-	const ResWorker = await HandleWorkers("/slice_oai_res_workers.js", RightPasswordRawRes); // Parsing Res
-	if (!ResWorker.success || !ResWorker?.data || !ResWorker.data?.WorkerResult)
-		return { GoodPsw: false };
-
-	const IsRightPassword = ResWorker.data.WorkerResult as LoginResShape;
-	if (!IsRightPassword?.success || !IsRightPassword?.data?.success) return { GoodPsw: false };
-	return { GoodPsw: true };
 };
 
 /**
