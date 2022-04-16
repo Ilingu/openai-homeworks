@@ -69,7 +69,7 @@
 	</h1>
 
 	<Form {HandleSubmit} {UserLoggedIn}>
-		<div class="my-1 text-lg">
+		<div class="my-1 xs:text-lg">
 			Input:
 			<select
 				bind:value={InputLang}
@@ -79,6 +79,7 @@
 				<option value="english">🇬🇧 English</option>
 				<option value="french">🇫🇷 French</option>
 			</select>
+			<br class="xs:hidden" />
 			Output:
 			<select
 				bind:value={OutputLang}
@@ -95,8 +96,8 @@
 			bind:value={InputQuestValue}
 			bind:this={InputQuestElem}
 			placeholder="Quelles sont les chambres disponibles?"
-			class="w-full rounded bg-primary-800 bg-opacity-60 p-3 text-xl font-semibold text-primary-lightest shadow-md 
-      shadow-primary-description outline-none transition-all focus:ring-2 focus:ring-primary-800"
+			class="w-full rounded bg-primary-800 bg-opacity-60 p-3 font-semibold text-primary-lightest shadow-md shadow-primary-description 
+      outline-none transition-all focus:ring-2 focus:ring-primary-800 xs:text-xl"
 			required
 		/>
 	</Form>

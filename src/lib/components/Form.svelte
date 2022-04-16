@@ -25,7 +25,7 @@
 		<button
 			type="submit"
 			disabled={!UserLoggedIn}
-			class="rounded-sm bg-primary-lighter p-1 transition-all hover:scale-105 hover:bg-primary-300"
+			class="mt-2 rounded-sm bg-primary-lighter p-1 transition-all hover:scale-105 hover:bg-primary-300 xs:mt-0"
 			><i class="fa-solid fa-robot" /> Submit</button
 		>
 	</form>

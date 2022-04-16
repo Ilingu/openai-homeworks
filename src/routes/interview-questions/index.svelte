@@ -66,7 +66,7 @@
 
 <Metatags />
 <article class="middle w-full">
-	<h1 class="text-4xl font-semibold text-primary-800">
+	<h1 class="text-[25px] font-semibold text-primary-800 xs:text-4xl">
 		<i class="fa-solid fa-briefcase" /> Interview Questions
 	</h1>
 
@@ -91,7 +91,7 @@
 				disabled={!UserLoggedIn}
 				placeholder={SentencePlaceholder}
 				required
-				class="h-8 w-96 rounded bg-primary-800 bg-opacity-30 text-center font-bold outline-none transition-all focus:ring-1 focus:ring-primary-800"
+				class="h-8 w-[350px] rounded bg-primary-800 bg-opacity-30 text-center font-bold outline-none transition-all focus:ring-1 focus:ring-primary-800"
 			/>
 		</div>
 	</Form>

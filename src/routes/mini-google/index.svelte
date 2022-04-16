@@ -58,7 +58,7 @@
 
 <Metatags />
 <article class="middle w-full">
-	<h1 class="text-4xl font-semibold text-primary-800">
+	<h1 class="text-3xl font-semibold text-primary-800 xs:text-4xl">
 		<i class="fa-brands fa-google" /> Mini Google
 	</h1>
 
