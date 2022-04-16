@@ -1,13 +1,13 @@
-import type { OpenAICallResShape, OpenAIResShape } from '$lib/interfaces/interfaces';
-import type { EnginesNames, TemperatureVal } from '$lib/interfaces/types';
-import { Configuration, OpenAIApi } from 'openai';
+import type { OpenAICallResShape, OpenAIResShape } from "../interface/_interfaces";
+import type { EnginesNames, TemperatureVal } from "../interface/_types";
+import { Configuration, OpenAIApi } from "openai";
 
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 const configuration = new Configuration({
 	apiKey: process.env.OPENAI_API_KEY,
-	organization: 'org-YtdbB30SU3tT1beMr85IuAR1'
+	organization: "org-YtdbB30SU3tT1beMr85IuAR1"
 });
 const openai = new OpenAIApi(configuration);
 

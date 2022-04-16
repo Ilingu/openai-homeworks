@@ -4,7 +4,7 @@
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
 	// Types
-	import { GetEngineStore, isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { GetEngineStore, isValidEngine, PushToast, CallApi } from "$lib/Utils/utils";
 	import { onMount } from "svelte";
 	import Form from "$lib/components/Form.svelte";
 
@@ -38,9 +38,13 @@
 				? InputQuestValue
 				: `${InputQuestValue}:`;
 
-			const OpenAIResponse = await RequestOpenAI(FormattedQuestion, EngineValue, 0.7);
-			if (!OpenAIResponse.success)
-				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
+			const OpenAIResponse = await CallApi({
+				METHOD: "POST",
+				URI: "/api/openai",
+				body: { Prompt: FormattedQuestion, Engine: EngineValue, Temperature: 0.7 }
+			});
+			if (!OpenAIResponse.succeed || !OpenAIResponse?.data?.text)
+				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.message);
 			OpenAIResText = OpenAIResponse.data.text;
 		} catch (err) {
 			console.error(err);

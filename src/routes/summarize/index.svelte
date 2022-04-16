@@ -4,7 +4,7 @@
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
 	// Types
-	import { GetEngineStore, isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { CallApi, GetEngineStore, isValidEngine, PushToast } from "$lib/Utils/utils";
 	import { onMount } from "svelte";
 	import Form from "$lib/components/Form.svelte";
 
@@ -36,17 +36,22 @@
 				: `${InputQuestValue}.`;
 			const FormattedSummary = `${
 				MethodSummary === "notes"
-					? "Convert my short hand into a first-hand account of the meeting:\n\n"
+					? "Convert my short hand into a first-hand account of the text:\n\n"
 					: "Summarize this for a second-grade student:\n\n"
 			}${FormattedQuestion}`;
 
-			const OpenAIResponse = await RequestOpenAI(
-				FormattedSummary,
-				EngineValue,
-				MethodSummary === "notes" ? 0 : 0.7
-			);
-			if (!OpenAIResponse.success)
-				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
+			const OpenAIResponse = await CallApi({
+				METHOD: "POST",
+				URI: "/api/openai",
+				body: {
+					Prompt: FormattedSummary,
+					Engine: EngineValue,
+					Temperature: MethodSummary === "notes" ? 0 : 0.7
+				}
+			});
+			if (!OpenAIResponse.succeed || !OpenAIResponse?.data?.text)
+				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.message);
+
 			OpenAIResText = OpenAIResponse.data.text;
 		} catch (err) {
 			console.error(err);

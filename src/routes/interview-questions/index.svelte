@@ -4,7 +4,7 @@
 	import DisplayAiRes from "$lib/components/DisplayAIRes.svelte";
 	import Metatags from "$lib/components/Metatags.svelte";
 	// Types
-	import { GetEngineStore, isValidEngine, PushToast, RequestOpenAI } from "$lib/Utils/utils";
+	import { CallApi, GetEngineStore, isValidEngine, PushToast } from "$lib/Utils/utils";
 	import { onMount } from "svelte";
 	import Form from "$lib/components/Form.svelte";
 
@@ -45,9 +45,18 @@
 			const FormattedQuestion = InputContext.endsWith(":") ? InputContext : `${InputContext}:`;
 			const FormattedPrompt = `Create a list of ${NumberQuest} questions for my interview ${FormattedQuestion}`;
 
-			const OpenAIResponse = await RequestOpenAI(FormattedPrompt, EngineValue, 0.5);
-			if (!OpenAIResponse.success)
-				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.reason);
+			const OpenAIResponse = await CallApi({
+				METHOD: "POST",
+				URI: "/api/openai",
+				body: {
+					Prompt: FormattedPrompt,
+					Engine: EngineValue,
+					Temperature: 0.5
+				}
+			});
+			if (!OpenAIResponse.succeed || !OpenAIResponse?.data?.text)
+				return PushToast("Completion Failed!", "error", 5000, OpenAIResponse?.message);
+
 			OpenAIResText = OpenAIResponse.data.text;
 		} catch (err) {
 			console.error(err);

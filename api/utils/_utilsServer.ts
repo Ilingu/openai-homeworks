@@ -1,8 +1,9 @@
-import type { ApiRes, FunctionResponseShape, ParseReqShape } from "$lib/interfaces/interfaces";
-import type { RequestShape, TemperatureVal } from "$lib/interfaces/types";
+import type { ApiRes, FunctionResponseShape, ParseReqShape } from "../interface/_interfaces";
+import type { JSONFormatter, TemperatureVal } from "../interface/_types";
 import { encode } from "gpt-3-encoder";
-import { isValidEngine, IsValidURL } from "./utils";
 import createKeccakHash from "keccak";
+import { isValidEngine } from "./_utils";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -12,11 +13,12 @@ dotenv.config();
  * @param {number | 500} http_error_code (Default: 500)
  * @returns Error Object To Send
  */
-export const ReturnError = (reason?: string, http_error_code?: number): ApiRes => {
+export const HandleError = (reason?: string, http_error_code?: number): ApiRes => {
 	console.error("API_ERROR: ", http_error_code || 500, reason);
 	return {
-		error: Error(reason || "Something Went Wrong 😨"),
-		status: http_error_code || 500
+		succeed: false,
+		code: http_error_code || 500,
+		message: reason || "Something Went Wrong 😨"
 	};
 };
 
@@ -26,33 +28,25 @@ export const ReturnError = (reason?: string, http_error_code?: number): ApiRes =
  * @param {number | 200} code (Default: 200)
  * @returns Success Object To Send
  */
-export const ReturnSuccess = (data?: object, code?: number): ApiRes => ({
-	status: code || 200,
-	body: data || undefined
-});
-
-/**
- * Return An Internal API Redirect Object
- * @param {string} redirect_uri
- * @returns Redirect Object To Send
- */
-export const ReturnRedirect = (redirect_uri: string): ApiRes => ({
-	redirect: IsValidURL(redirect_uri) ? redirect_uri : "/",
-	status: 307
+export const HandleSuccess = (code?: number, data?: object): ApiRes => ({
+	succeed: true,
+	code: code || 200,
+	data: data || undefined
 });
 
 /**
  * Parse The Request Obj From API
- * @param {RequestShape} request
+ * @param {Body} request
  * @returns {ParseReqShape} An object with the validity of the req and if valid the request data
  */
-export const ParseRequest = async (request: RequestShape): Promise<ParseReqShape> => {
-	const data = await request.json();
-	if (!data) return { success: false };
+export const ParseRequest = async (body: string, AuthToken: string): Promise<ParseReqShape> => {
+	let data: JSONFormatter;
+	if (typeof body === "object") data = body;
+	if (typeof body === "string") data = JSON.parse(body);
+	if (!body || !data) return { success: false };
 
 	const Prompt = data["Prompt"];
 	const Engine = data["Engine"];
-	const AuthToken = data["AuthToken"];
 	const Temperature = parseFloat(data["Temperature"]) as TemperatureVal;
 
 	if (!Prompt || !Engine || Prompt.trim().length <= 0 || Engine.trim().length <= 0)
