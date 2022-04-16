@@ -23,8 +23,9 @@
 
 	$: SentencePlaceholder = [
 		"Write a thanks you message for my mom birthday:",
-		"Convert 100 days to seconds:"
-	][Math.round(Math.random() * 1)];
+		"Convert 100 days to seconds:",
+		"What are 5 key points I should know when studying Ancient Rome?"
+	][Math.round(Math.random() * 2)];
 
 	const HandleSubmit = async () => {
 		try {

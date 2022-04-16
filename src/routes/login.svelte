@@ -24,6 +24,7 @@
 			// Save psw in store
 			SessionPassword.set(IAuthToken);
 			window.localStorage.setItem("SessionPassword", JSON.stringify(IAuthToken));
+			IAuthToken = ""; // Reset Input
 		} catch (err) {
 			console.error(err);
 			PushToast("Internal Error", "error", 5000, "Couldn't reach internal server");

@@ -31,11 +31,14 @@
 			if (InputQuestValue.length <= 0 || !isValidEngine(EngineValue) || !isValidMethodName())
 				return PushToast("Bad Arguments", "warning", 3600);
 
+			const FormattedQuestion = InputQuestValue.endsWith(".")
+				? InputQuestValue
+				: `${InputQuestValue}.`;
 			const FormattedSummary = `${
 				MethodSummary === "notes"
 					? "Convert my short hand into a first-hand account of the meeting:\n\n"
 					: "Summarize this for a second-grade student:\n\n"
-			}${InputQuestValue}`;
+			}${FormattedQuestion}`;
 
 			const OpenAIResponse = await RequestOpenAI(
 				FormattedSummary,
