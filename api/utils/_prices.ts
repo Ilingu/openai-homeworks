@@ -11,8 +11,8 @@ type PriceShape = {
 
 const MAX_VALUE: PriceShape = {
 	"text-davinci-002": {
-		MAX_PROMPT: 30,
-		MAX_COMPLETION: 30
+		MAX_PROMPT: 35,
+		MAX_COMPLETION: 65
 	},
 	"text-curie-001": {
 		MAX_PROMPT: 60,
@@ -44,9 +44,9 @@ export const GetPrice = (Engine: EnginesNames, Prompt: string): GetPriceRes => {
 
 /*
 Davinci
-	 MAX_PROMPT: 30 token
-	 MAX_COMPLETION: 30 token
-	 MAX_COST: 60T = 0.0036$/req
+	 MAX_PROMPT: 35 token
+	 MAX_COMPLETION: 65 token
+	 MAX_COST: 100T = 0.006$/req
 
 Currie
 	 MAX_PROMPT: 60 token
